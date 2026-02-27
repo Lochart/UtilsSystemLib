@@ -11,15 +11,15 @@ import Vision
 
 // MARK: - CardScannerView оптимизация и улучшения
 @available(iOS 16.0, *)
-struct CardScannerView: UIViewControllerRepresentable {
+public struct CardScannerView: UIViewControllerRepresentable {
     @Binding var scannedText: String
     @Environment(\.presentationMode) var presentationMode
     
-    func makeCoordinator() -> Coordinator {
+    public func makeCoordinator() -> Coordinator {
         Coordinator(self)
     }
     
-    func makeUIViewController(context: Context) -> DataScannerViewController {
+    public func makeUIViewController(context: Context) -> DataScannerViewController {
         let scanner = DataScannerViewController(
             recognizedDataTypes: [.text()],
             qualityLevel: .accurate,
@@ -36,10 +36,10 @@ struct CardScannerView: UIViewControllerRepresentable {
         return scanner
     }
     
-    func updateUIViewController(_ uiViewController: DataScannerViewController, context: Context) {}
+    public func updateUIViewController(_ uiViewController: DataScannerViewController, context: Context) {}
     
     // MARK: - Image Picker & Vision OCR
-    func recognizeTextFromImage(_ image: UIImage, completion: @escaping (String?) -> Void) {
+    public func recognizeTextFromImage(_ image: UIImage, completion: @escaping (String?) -> Void) {
         guard let cgImage = image.cgImage else {
             completion(nil)
             return
@@ -62,7 +62,7 @@ struct CardScannerView: UIViewControllerRepresentable {
     }
     
     // MARK: - Общий метод для извлечения номера
-    static func extractCardNumber(from text: String) -> String? {
+    public static func extractCardNumber(from text: String) -> String? {
         if let number = text.firstMatch(regex: "\\d[\\d\\s]{7,}\\d") {
             return number.replacingOccurrences(of: " ", with: "")
         }
@@ -70,13 +70,13 @@ struct CardScannerView: UIViewControllerRepresentable {
     }
     
     // MARK: - Coordinator
-    class Coordinator: NSObject, DataScannerViewControllerDelegate {
+    public class Coordinator: NSObject, DataScannerViewControllerDelegate {
         let parent: CardScannerView
         init(_ parent: CardScannerView) {
             self.parent = parent
         }
         // Автоматический захват чисел при появлении
-        func dataScanner(_ dataScanner: DataScannerViewController, didAdd items: [RecognizedItem]) {
+        public func dataScanner(_ dataScanner: DataScannerViewController, didAdd items: [RecognizedItem]) {
             for item in items {
                 if case .text(let textItem) = item {
                     parent.handleRecognizedText(textItem)
@@ -84,7 +84,7 @@ struct CardScannerView: UIViewControllerRepresentable {
                 }
             }
         }
-        func dataScanner(_ dataScanner: DataScannerViewController, didTapOn item: RecognizedItem) {
+        public func dataScanner(_ dataScanner: DataScannerViewController, didTapOn item: RecognizedItem) {
             switch item {
                 case .text(let textItem):
                     parent.handleRecognizedText(textItem, fallback: true)
@@ -95,7 +95,7 @@ struct CardScannerView: UIViewControllerRepresentable {
     }
     
     // MARK: - Приватный метод для обработки текста
-    func handleRecognizedText(_ textItem: RecognizedItem.Text, fallback: Bool = false) {
+    public func handleRecognizedText(_ textItem: RecognizedItem.Text, fallback: Bool = false) {
         // Используем свойство textItem.transcript для получения текста
         let transcript = textItem.transcript
         if let cleanNumber = CardScannerView.extractCardNumber(from: transcript) {
