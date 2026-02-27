@@ -10,6 +10,7 @@ import VisionKit
 import Vision
 
 // MARK: - Image Picker
+@available(iOS 13.0, *)
 struct ImagePicker: UIViewControllerRepresentable {
     
     @Binding var image: UIImage?
