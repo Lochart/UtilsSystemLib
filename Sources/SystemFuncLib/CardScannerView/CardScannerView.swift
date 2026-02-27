@@ -15,6 +15,10 @@ public struct CardScannerView: UIViewControllerRepresentable {
     @Binding var scannedText: String
     @Environment(\.presentationMode) var presentationMode
     
+    public init(scannedText: Binding<String>) {
+        self._scannedText = scannedText
+    }
+    
     public func makeCoordinator() -> Coordinator {
         Coordinator(self)
     }
