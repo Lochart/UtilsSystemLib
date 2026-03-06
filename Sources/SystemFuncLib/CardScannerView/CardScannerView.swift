@@ -7,7 +7,7 @@
 
 import SwiftUI
 import VisionKit
-import Vision
+@preconcurrency import Vision
 
 // MARK: - CardScannerView оптимизация и улучшения
 @available(iOS 16.0, *)
@@ -55,7 +55,7 @@ public struct CardScannerView: UIViewControllerRepresentable {
             }
             let texts = results.compactMap { $0.topCandidates(1).first?.string }
             let joined = texts.joined(separator: " ")
-            completion(CardScannerView.extractCardNumber(from: joined))
+            completion(RegexFuncLib.extractCardNumber(from: joined))
         }
         request.recognitionLevel = .accurate
         request.recognitionLanguages = ["ru", "en"]
@@ -63,14 +63,6 @@ public struct CardScannerView: UIViewControllerRepresentable {
         DispatchQueue.global(qos: .userInitiated).async {
             try? handler.perform([request])
         }
-    }
-    
-    // MARK: - Общий метод для извлечения номера
-    public static func extractCardNumber(from text: String) -> String? {
-        if let number = text.firstMatch(regex: "\\d[\\d\\s]{7,}\\d") {
-            return number.replacingOccurrences(of: " ", with: "")
-        }
-        return nil
     }
     
     // MARK: - Coordinator
@@ -102,7 +94,7 @@ public struct CardScannerView: UIViewControllerRepresentable {
     public func handleRecognizedText(_ textItem: RecognizedItem.Text, fallback: Bool = false) {
         // Используем свойство textItem.transcript для получения текста
         let transcript = textItem.transcript
-        if let cleanNumber = CardScannerView.extractCardNumber(from: transcript) {
+        if let cleanNumber = RegexFuncLib.extractCardNumber(from: transcript) {
             scannedText = cleanNumber
         } else if fallback {
             scannedText = transcript

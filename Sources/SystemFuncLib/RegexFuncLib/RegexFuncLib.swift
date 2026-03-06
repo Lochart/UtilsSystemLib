@@ -5,7 +5,7 @@
 //  Created by Nikolay Burkin on 06.03.2026.
 //
 
-public static StaticFuncLib {
+public struct RegexFuncLib {
     
     // MARK: - Общий метод для извлечения номера
     public static func extractCardNumber(from text: String) -> String? {
